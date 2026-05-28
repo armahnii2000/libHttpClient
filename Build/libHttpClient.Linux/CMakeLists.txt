@@ -146,6 +146,7 @@ if (BUILD_SHARED_LIBS)
         PRIVATE ${LIBCURL_BINARY_PATH}
         PRIVATE ${LIBSSL_BINARY_PATH}
         PRIVATE ${LIBCRYPTO_BINARY_PATH}
+        PRIVATE dl
     )
 else()
     #########################
