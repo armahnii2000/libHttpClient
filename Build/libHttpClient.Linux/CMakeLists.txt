@@ -235,6 +235,7 @@ if (HC_ENABLE_WEBSOCKET_COMPRESSION AND NOT HC_NOWEBSOCKETS)
             "${LIBCURL_BINARY_PATH}"
             "${LIBSSL_BINARY_PATH}"
             "${LIBCRYPTO_BINARY_PATH}"
+            dl
         )
     endif()
 
