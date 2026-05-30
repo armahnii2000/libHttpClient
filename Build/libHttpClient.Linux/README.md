@@ -6,6 +6,24 @@ These scripts will be used to build the static library dependencies for libHttpC
 
 You will need a Linux machine, a Linux virtual machine, or Windows Subsystem for Linux (WSL) to run the build script.
 
+### Build dependencies
+
+The Linux build requires `clang`, `make`, `autoconf`, `automake`, `libtool`, and `zlib1g`/`zlib1g-dev` on the host. On Debian/Ubuntu these can be installed via the helper script `install_dependencies.bash`:
+
+```
+./install_dependencies.bash               # install missing deps via apt
+./install_dependencies.bash --check       # verify deps without installing
+```
+
+When you invoke `libHttpClient_Linux.bash` directly, it runs `install_dependencies.bash --check` automatically and exits with a clear error if any dependency is missing. Pass `--install-dependencies` to have it run the installer instead, or `-sd|--skip-dependency-check` to bypass the check entirely:
+
+```
+./libHttpClient_Linux.bash --install-dependencies   # install missing deps then build
+./libHttpClient_Linux.bash --skip-dependency-check  # build without verifying deps
+```
+
+**Migration note (PR #963, April 2026):** Prior to PR #963 the build script ran `sudo apt-get install` automatically. That behavior was removed to avoid requiring `sudo` on every build. Downstream consumers running cold CI agents who relied on the implicit install should add an explicit `install_dependencies.bash` step (or pass `--install-dependencies` to `libHttpClient_Linux.bash`) before any of the dependent build scripts (`openssl_Linux.bash`, `curl_Linux.bash`, `libHttpClient_Linux.bash`).
+
 ## libHttpClient_Linux.bash
 
 Running `libHttpClient_Linux` can generate a variety of build configurations and binaries for libHttpClient and its dependencies. These binaries will be placed at `Out/x64/{Configuration}/{Library}`. Example usage is below.
