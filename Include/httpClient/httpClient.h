@@ -1043,7 +1043,23 @@ enum class HCWebSocketOptions : uint32_t
     CompressionClientNoContextTakeover = 0x00000004
 };
 
+// Augmented Party.h pattern (push_macro + #undef + #define safe + pop_macro).
+// #undef forces libHttpClient's safe version at the call site, overriding any caller pre-def.
+// Hypothesis: build succeeds.
+#pragma push_macro("DEFINE_ENUM_FLAG_OPERATORS")
+#undef DEFINE_ENUM_FLAG_OPERATORS
+#define DEFINE_ENUM_FLAG_OPERATORS(ENUMTYPE) \
+extern "C++" { \
+inline ENUMTYPE operator | (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) | ((int)b)); } \
+inline ENUMTYPE &operator |= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) | ((int)b))); } \
+inline ENUMTYPE operator & (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) & ((int)b)); } \
+inline ENUMTYPE &operator &= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) & ((int)b))); } \
+inline ENUMTYPE operator ~ (ENUMTYPE a) throw() { return ENUMTYPE(~((int)a)); } \
+inline ENUMTYPE operator ^ (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) ^ ((int)b)); } \
+inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) ^ ((int)b))); } \
+}
 DEFINE_ENUM_FLAG_OPERATORS(HCWebSocketOptions)
+#pragma pop_macro("DEFINE_ENUM_FLAG_OPERATORS")
 
 /// <summary>
 /// Creates an WebSocket handle.
