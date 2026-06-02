@@ -1043,7 +1043,24 @@ enum class HCWebSocketOptions : uint32_t
     CompressionClientNoContextTakeover = 0x00000004
 };
 
+// Party.h pattern VERBATIM (push_macro + #ifndef + #define safe + #endif + pop_macro).
+// Mirrors Xbox.Bumblelion/src/cofa/client/pub/Party.h:17-27,12137.
+// Hypothesis: still fails because #ifndef defers to caller's bare definition.
+#pragma push_macro("DEFINE_ENUM_FLAG_OPERATORS")
+#ifndef DEFINE_ENUM_FLAG_OPERATORS
+#define DEFINE_ENUM_FLAG_OPERATORS(ENUMTYPE) \
+extern "C++" { \
+inline ENUMTYPE operator | (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) | ((int)b)); } \
+inline ENUMTYPE &operator |= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) | ((int)b))); } \
+inline ENUMTYPE operator & (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) & ((int)b)); } \
+inline ENUMTYPE &operator &= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) & ((int)b))); } \
+inline ENUMTYPE operator ~ (ENUMTYPE a) throw() { return ENUMTYPE(~((int)a)); } \
+inline ENUMTYPE operator ^ (ENUMTYPE a, ENUMTYPE b) throw() { return ENUMTYPE(((int)a) ^ ((int)b)); } \
+inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) throw() { return (a = (ENUMTYPE)(((int)a) ^ ((int)b))); } \
+}
+#endif
 DEFINE_ENUM_FLAG_OPERATORS(HCWebSocketOptions)
+#pragma pop_macro("DEFINE_ENUM_FLAG_OPERATORS")
 
 /// <summary>
 /// Creates an WebSocket handle.
