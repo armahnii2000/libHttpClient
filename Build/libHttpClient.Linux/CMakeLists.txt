@@ -146,6 +146,7 @@ if (BUILD_SHARED_LIBS)
         PRIVATE ${LIBCURL_BINARY_PATH}
         PRIVATE ${LIBSSL_BINARY_PATH}
         PRIVATE ${LIBCRYPTO_BINARY_PATH}
+        PRIVATE ${CMAKE_DL_LIBS}
     )
 else()
     #########################
@@ -226,6 +227,7 @@ if (HC_ENABLE_WEBSOCKET_COMPRESSION AND NOT HC_NOWEBSOCKETS)
         PRIVATE
         "${PROJECT_NAME}"
         Threads::Threads
+        ${CMAKE_DL_LIBS}
     )
 
     if (NOT BUILD_SHARED_LIBS)
